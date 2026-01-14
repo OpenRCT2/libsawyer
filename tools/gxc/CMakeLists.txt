@@ -1,15 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(gxc CXX)
 
-# libsawyer
-find_package(sawyer REQUIRED PATHS ../../out/share)
-
-# libraries
-if (MSVC)
-    find_package(libpng CONFIG REQUIRED)
-endif ()
-find_package(nlohmann_json CONFIG REQUIRED)
-
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SAWYER_SOURCES "src/*.cpp")
@@ -22,6 +13,13 @@ else ()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc")
     endif()
 endif ()
+
+# libsawyer
+find_package(sawyer REQUIRED PATHS ../../out/share)
+
+# libraries
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(PNG REQUIRED)
 
 add_executable(gxc ${SAWYER_SOURCES})
 if (${VCPKG_TARGET_TRIPLET} MATCHES "-static$")

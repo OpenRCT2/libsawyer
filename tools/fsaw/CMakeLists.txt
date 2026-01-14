@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(fsaw CXX)
 
-find_package(sawyer REQUIRED PATHS ../../out/share)
-
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SAWYER_SOURCES "src/*.cpp")
@@ -12,6 +10,12 @@ if (MSVC)
 else ()
 
 endif ()
+
+# libsawyer
+find_package(sawyer REQUIRED PATHS ../../out/share)
+
+# libraries
+find_package(PNG REQUIRED)
 
 add_executable(fsaw ${SAWYER_SOURCES})
 if (${VCPKG_TARGET_TRIPLET} MATCHES "-static$")
