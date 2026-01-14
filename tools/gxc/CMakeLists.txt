@@ -24,7 +24,7 @@ find_package(PNG REQUIRED)
 add_executable(gxc ${SAWYER_SOURCES})
 if (${VCPKG_TARGET_TRIPLET} MATCHES "-static$")
     set_property(TARGET gxc PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    target_link_libraries(gxc PRIVATE png_static)
+    target_link_libraries(gxc PRIVATE PNG::PNG)
 endif ()
 
 target_link_libraries(gxc PRIVATE nlohmann_json::nlohmann_json)

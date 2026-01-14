@@ -5,30 +5,9 @@ if (CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR)
     message(FATAL_ERROR "Do not build in the root. Create a bin directory and remove ${CMAKE_SOURCE_DIR}/CMakeCache.txt")
 endif ()
 
-function (merge_static_libraries target source)
-    set(TARGET_PATH $<TARGET_FILE:${target}>)
-    if (MSVC)
-        set(TEMP_PATH "tmplib")
-        add_custom_command(TARGET ${target} POST_BUILD
-            COMMAND mv ${TARGET_PATH} ${TEMP_PATH}
-            COMMAND lib "/out:${TARGET_PATH}" ${TEMP_PATH} ${source}
-            COMMAND rm ${TEMP_PATH}
-            COMMENT "Relinking ${target} with ${source}")
-    else ()
-        set(TEMP_PATH "tmpobj")
-        add_custom_command(TARGET ${target} POST_BUILD
-            COMMAND mkdir -p ${TEMP_PATH}
-            COMMAND ${CMAKE_AR} x ${TARGET_PATH} --output ${TEMP_PATH}
-            COMMAND ${CMAKE_AR} x ${source} --output ${TEMP_PATH}
-            COMMAND ${CMAKE_AR} qc ${TARGET_PATH} "${TEMP_PATH}/*.o"
-            COMMAND rm -rf ${TEMP_PATH}
-            COMMENT "Relinking ${target} with ${source}")
-    endif ()
-endfunction ()
-
 # Options
-option(ENABLE_LIBPNG        "Embed libpng into the library." ON)
-option(ENABLE_TESTS         "Build the unit tests for the library." ON)
+option(ENABLE_LIBPNG "Link libpng into the library." ON)
+option(ENABLE_TESTS  "Build the unit tests for the library." ON)
 
 # Library
 project(sawyer CXX)
