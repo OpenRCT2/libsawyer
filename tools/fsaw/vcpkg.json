@@ -1,8 +1,7 @@
 {
-    "name": "libsawyer",
+    "name": "fsaw",
     "version-string": "0.1.0",
     "dependencies": [
-        "gtest",
         "libpng"
     ]
 }

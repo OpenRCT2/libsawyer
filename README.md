@@ -11,10 +11,10 @@ cmake --build bin
 cmake --install bin
 ```
 
-### Optional modules
+### Optional components
 
-Depending on your needs, you may like to disable some modules. Five modules are optional
-(`ENABLE_BREAKPAD`, `ENABLE_DISCORD_RPC`, `ENABLE_LIBPNG`, `ENABLE_SCRIPTING`, `ENABLE_TESTS`).
+Depending on your needs, you may like to disable some components. Two components are optional
+(`ENABLE_LIBPNG`, `ENABLE_TESTS`).
 They can be pass to `cmake` via `-D<param>=<bool>`, e.g. `ENABLE_DISCORD_RPC=OFF`.
 
 ### Build and run tests
