@@ -4,5 +4,13 @@
     "dependencies": [
         "libpng",
         "nlohmann-json"
-    ]
+    ],
+    "overrides": [
+        {
+            "name": "nlohmann-json",
+            "$explanation": "3.12.0 contains a major issue related to utf8 strings. Should be fixed when 3.12.1 releases",
+            "version": "3.11.3#1"
+        }
+    ],
+    "builtin-baseline": "120deac3062162151622ca4860575a33844ba10b"
 }
