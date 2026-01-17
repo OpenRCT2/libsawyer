@@ -60,6 +60,14 @@ static void encodePaletteFromImage(Stream& stream, const Image& image)
     }
 }
 
+static void encodePaletteFromArray(Stream& stream, const std::vector<BGRColour>& colours)
+{
+    for (auto& colour : colours)
+    {
+        stream.write(&colour, 3);
+    }
+}
+
 static std::string stringifyFlags(uint16_t flags)
 {
     std::string result;
@@ -136,6 +144,21 @@ int runBuild(const CommandLineOptions& options)
         }
         try
         {
+            // Palette arrays don't have an image to load, so start with those
+            if (manifestEntry.format == SpriteManifest::Format::paletteArray)
+            {
+                MemoryStream ms;
+                encodePaletteFromArray(ms, manifestEntry.colours);
+
+                SpriteArchive::Entry entry;
+                entry.width = manifestEntry.colours.size();
+                entry.height = 1;
+                entry.offsetX = manifestEntry.offsetX;
+                entry.flags = GxFlags::isPalette;
+                archive.addEntry(entry, ms.asSpan<const std::byte>());
+                continue;
+            }
+
             auto imageCacheIterator = imageCache.find(manifestEntry.path);
             if (imageCacheIterator == imageCache.end())
             {

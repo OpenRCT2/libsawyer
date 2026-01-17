@@ -41,7 +41,7 @@ static SpriteManifest::Format parseFormat(const nlohmann::json& jFormat, const b
     else if (value == "palette" && hasImageFile)
         return SpriteManifest::Format::paletteImage;
     else if (value == "palette")
-        return SpriteManifest::Format::paletteHex;
+        return SpriteManifest::Format::paletteArray;
     else
         throw std::runtime_error("Unknown format");
 }
@@ -117,6 +117,43 @@ static std::optional<Range> parseRange(std::string_view s)
     return std::nullopt;
 }
 
+static BGRColour parseJSONPaletteColour(const std::string& s)
+{
+    uint8_t r = 0;
+    uint8_t g = 0;
+    uint8_t b = 0;
+    if (s[0] == '#' && s.size() == 7)
+    {
+        // Expect #RRGGBB
+        r = std::stoul(s.substr(1, 2), nullptr, 16) & 0xFF;
+        g = std::stoul(s.substr(3, 2), nullptr, 16) & 0xFF;
+        b = std::stoul(s.substr(5, 2), nullptr, 16) & 0xFF;
+    }
+    return { b, g, r };
+}
+
+static std::vector<BGRColour> parseColours(const nlohmann::json& jPalette)
+{
+    if (!jPalette.is_object())
+        throw std::runtime_error("parseColours expects parameter jPalette to be an object");
+
+    auto jColours = jPalette["colours"];
+    std::vector<BGRColour> out;
+
+    auto numColours = jColours.size();
+    out.reserve(numColours * 3);
+
+    for (auto& jColour : jColours)
+    {
+        if (!jColour.is_string())
+            throw std::runtime_error("Encountered a value that is not a string!");
+
+        out.push_back(parseJSONPaletteColour(jColour.get<std::string>()));
+    }
+
+    return out;
+}
+
 static SpriteManifest::Entry parseEntry(const nlohmann::json& jEntry)
 {
     SpriteManifest::Entry result;
@@ -150,14 +187,22 @@ static SpriteManifest::Entry parseEntry(const nlohmann::json& jEntry)
         if (jEntry.contains("path"))
             result.path = jEntry.at("path").get<std::string>();
         if (jEntry.contains("format"))
-            result.format = parseFormat(jEntry["format"], jEntry.contains("path"));
+            result.format = parseFormat(jEntry["format"], result.path.empty());
+
         if (jEntry.contains("palette"))
             result.palette = parsePalette(jEntry["palette"]);
+        if (jEntry.contains("colours"))
+            result.colours = parseColours(jEntry);
+
+        if (result.format == SpriteManifest::Format::automatic && !result.colours.empty())
+            result.format = SpriteManifest::Format::paletteArray;
 
         if (jEntry.contains("x"))
             result.offsetX = jEntry["x"];
         else if (jEntry.contains("x_offset"))
             result.offsetX = jEntry["x_offset"];
+        else if (jEntry.contains("index"))    // palette startIndex
+            result.offsetX = jEntry["index"]; // palette startIndex
 
         if (jEntry.contains("y"))
             result.offsetY = jEntry["y"];
