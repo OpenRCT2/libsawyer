@@ -7,6 +7,15 @@
 
 namespace gxc
 {
+    struct BGRColour
+    {
+        uint8_t blue{};
+        uint8_t green{};
+        uint8_t red{};
+    };
+
+    using ColourVector = std::vector<BGRColour>;
+
     class SpriteArchive;
 
     class SpriteManifest
@@ -33,6 +42,7 @@ namespace gxc
             fs::path path;
             Format format{};
             PaletteKind palette{};
+            ColourVector colours{};
             int32_t offsetX{};
             int32_t offsetY{};
             int32_t zoomOffset{};
