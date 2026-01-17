@@ -135,7 +135,7 @@ static BGRColour parseJSONPaletteColour(const std::string& s)
 static std::vector<BGRColour> parseColours(const nlohmann::json& jPalette)
 {
     if (!jPalette.is_object())
-        std::runtime_error("parseColours expects parameter jPalette to be an object");
+        throw std::runtime_error("parseColours expects parameter jPalette to be an object");
 
     auto jColours = jPalette["colours"];
     std::vector<BGRColour> out;
@@ -146,7 +146,7 @@ static std::vector<BGRColour> parseColours(const nlohmann::json& jPalette)
     for (auto& jColour : jColours)
     {
         if (!jColour.is_string())
-            std::runtime_error("Encountered a value that is not a string!");
+            throw std::runtime_error("Encountered a value that is not a string!");
 
         out.push_back(parseJSONPaletteColour(jColour.get<std::string>()));
     }
