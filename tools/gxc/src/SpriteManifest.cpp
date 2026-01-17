@@ -31,15 +31,17 @@ struct Range
     }
 };
 
-static SpriteManifest::Format parseFormat(const nlohmann::json& jFormat)
+static SpriteManifest::Format parseFormat(const nlohmann::json& jFormat, const bool hasImageFile)
 {
     auto value = jFormat.get<std::string>();
     if (value == "bmp" || value == "raw")
         return SpriteManifest::Format::bmp;
     else if (value == "rle")
         return SpriteManifest::Format::rle;
+    else if (value == "palette" && hasImageFile)
+        return SpriteManifest::Format::paletteImage;
     else if (value == "palette")
-        return SpriteManifest::Format::palette;
+        return SpriteManifest::Format::paletteHex;
     else
         throw std::runtime_error("Unknown format");
 }
@@ -145,21 +147,25 @@ static SpriteManifest::Entry parseEntry(const nlohmann::json& jEntry)
     }
     else
     {
-        result.path = jEntry.at("path").get<std::string>();
+        if (jEntry.contains("path"))
+            result.path = jEntry.at("path").get<std::string>();
         if (jEntry.contains("format"))
-            result.format = parseFormat(jEntry["format"]);
+            result.format = parseFormat(jEntry["format"], jEntry.contains("path"));
         if (jEntry.contains("palette"))
             result.palette = parsePalette(jEntry["palette"]);
+
         if (jEntry.contains("x"))
             result.offsetX = jEntry["x"];
         else if (jEntry.contains("x_offset"))
             result.offsetX = jEntry["x_offset"];
+
         if (jEntry.contains("y"))
             result.offsetY = jEntry["y"];
         else if (jEntry.contains("y_offset"))
             result.offsetY = jEntry["y_offset"];
         else if (jEntry.contains("zoom"))
             result.zoomOffset = jEntry["zoom"];
+
         if (jEntry.contains("srcX"))
             result.srcX = jEntry["srcX"];
         if (jEntry.contains("srcY"))

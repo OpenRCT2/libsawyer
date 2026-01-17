@@ -32,7 +32,7 @@ static void convertPaletteToBmp(const GxEntry& entry, void* dst)
     }
 }
 
-static void encodePalette(Stream& stream, const Image& image)
+static void encodePaletteFromImage(Stream& stream, const Image& image)
 {
     const auto* src = image.pixels.data();
     for (uint32_t x = 0; x < image.width; x++)
@@ -151,10 +151,10 @@ int runBuild(const CommandLineOptions& options)
                 img = img.crop(manifestEntry.srcX, manifestEntry.srcY, manifestEntry.srcWidth, manifestEntry.srcHeight);
             }
 
-            if (manifestEntry.format == SpriteManifest::Format::palette)
+            if (manifestEntry.format == SpriteManifest::Format::paletteImage)
             {
                 MemoryStream ms;
-                encodePalette(ms, img);
+                encodePaletteFromImage(ms, img);
 
                 SpriteArchive::Entry entry;
                 entry.width = img.width;

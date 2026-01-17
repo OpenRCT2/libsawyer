@@ -17,7 +17,8 @@ namespace gxc
             automatic,
             bmp,
             rle,
-            palette,
+            paletteImage,
+            paletteArray,
             empty
         };
 
