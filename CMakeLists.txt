@@ -13,7 +13,13 @@ option(ENABLE_TESTS  "Build the unit tests for the library." ON)
 project(sawyer CXX)
 enable_testing()
 
-set(CMAKE_CXX_STANDARD 17)
+if (MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /std:c++20 /utf-8 /Zc:char8_t- /WX")
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+else ()
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-char8_t -Wno-deprecated-declarations")
+endif ()
 
 file(GLOB_RECURSE SAWYER_SOURCES "src/*.cpp")
 file(GLOB_RECURSE SAWYER_HEADERS "src/*.h" "src/*.hpp")
@@ -32,13 +38,6 @@ if (ENABLE_LIBPNG)
     else ()
         target_link_libraries(sawyer PRIVATE png)
     endif ()
-endif ()
-
-if (MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /std:c++17 /utf-8 /WX")
-    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-else ()
-
 endif ()
 
 # set_target_properties(sawyer PROPERTIES PUBLIC_HEADER "src/SawyerStream.h;src\\thirdparty/span.hpp")

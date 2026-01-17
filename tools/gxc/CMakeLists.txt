@@ -1,16 +1,15 @@
 cmake_minimum_required(VERSION 3.15)
 project(gxc CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-
 file(GLOB_RECURSE SAWYER_SOURCES "src/*.cpp")
 
 if (MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /std:c++17 /utf-8 /WX")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /std:c++20 /utf-8 /Zc:char8_t- /WX")
 else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++")
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -fno-char8_t -Wno-deprecated-declarations")
     if (EXISTS "/etc/alpine-release")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc")
     endif()
 endif ()
 
