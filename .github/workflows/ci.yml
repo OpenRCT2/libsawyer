@@ -45,7 +45,7 @@ jobs:
         platform: [x64]
     steps:
       - name: Prepare environment
-        run: sudo apt-get install ninja-build libpng-dev nlohmann-json3-dev libgtest-dev
+        run: sudo apt-get update && sudo apt-get install ninja-build libpng-dev nlohmann-json3-dev libgtest-dev
       - name: Checkout
         uses: actions/checkout@v6
       - name: Build libsawyer
